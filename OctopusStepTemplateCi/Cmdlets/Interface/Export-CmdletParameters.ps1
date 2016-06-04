@@ -5,7 +5,11 @@ function Export-CmdletParameters {
     
     $cmdlettMetaData = Get-Help -Name $Name 
     $firstParameter = $true
+    
+    $mappedCmdlet = ""
      $cmdlettMetaData |  % { $_.parameters.parameter } | % {
+        $mappedCmdlet += "-$($_.name) `$$($_.Name) "
+        
          if ($firstParameter) { "@{"; $firstParameter = $false }
          else { "}, @{" }
          
@@ -35,4 +39,7 @@ function Export-CmdletParameters {
         }
     }
     '}'
+    
+    "# Cmdlet Invocation"
+    "$Name $mappedCmdlet"
 }
