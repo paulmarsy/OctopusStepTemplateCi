@@ -26,8 +26,30 @@ function New-ScriptModuleObject {
         $Path
     )
 
+    $baseScriptModule = Get-ScriptBody -Path $Path
+    $name = Get-VariableFromScriptFile -Path $Path -VariableName ScriptModuleName
+  
+        $scriptModuleContent = @"
+if (`$null -eq `$ImportedScriptModules) { `$ImportedScriptModules = @{} }
+`$ImportedScriptModules['$Name'] = @{
+    Name = '$($name)'
+"@
+  
+    $version = Get-VariableFromScriptFile -Path $Path -VariableName ScriptModuleVersion -AllowMissingVariable
+    if ($version) {
+        $scriptModuleContent += @"
+    Version = '$($version)'
+"@
+    }
+    
+    $scriptModuleContent += @"
+}
+
+$baseScriptModule
+"@
+         
     New-Object -TypeName PSCustomObject -Property (@{
-            'Name' = ("Octopus.Script.Module[{0}]" -f (Get-VariableFromScriptFile -Path $Path -VariableName ScriptModuleName))
-            'Value' = Get-ScriptBody -Path $Path
+            'Name' = ("Octopus.Script.Module[{0}]" -f )
+            'Value' = $scriptModuleContent
     })
 }

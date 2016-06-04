@@ -25,13 +25,41 @@ function New-StepTemplateObject {
     param (
         $Path
     )
+    
+    $stepTemplateName =  Get-VariableFromScriptFile -Path $Path -VariableName StepTemplateName
+    $baseStepTemplate = Get-ScriptBody -Path $Path
+    $moduleImports = Get-VariableFromScriptFile -Path $Path -VariableName StepTemplateModuleImports -AllowMissingVariable
+    $stepTemplateContent = ""
+    if ($moduleImports) {
+        $stepTemplateContent = @"
+if (`$null -eq `$ImportedScriptModules) {
+    throw "No Script Modules have been imported"
+}
+"@
+        foreach ($scriptModule in @($moduleImports)) {
+            $stepTemplateContent += @"
+ if (-not `$ImportedScriptModules.Contains('$($scriptModule.Name)')) {
+     throw "This Octopus project requires Script Module '$($scriptModule.Name)' to be included, please add it and retry the deployment (Step Template: '$($stepTemplateName)')"     
+ }
+"@
+            if ($scriptModule.RequiredVersion) {
+                $stepTemplateContent += @"
+ if (`$ImportedScriptModules['$($scriptModule.Name)'].Version -ne '$($scriptModule.RequiredVersion)') {
+     throw "Step Template '$($stepTemplateName)' requires version '$($scriptModule.RequiredVersion)' of Script Module '$($scriptModule.Name)', the Step Template needs to be updated and/or the Octopus project needs to reference the newer template."
+ }
+"@
+            } 
+        }
+    } else {
+        $stepTemplateContent = $baseStepTemplate
+    }
 
     New-Object -TypeName PSObject -Property (@{
-        'Name' = Get-VariableFromScriptFile -Path $Path -VariableName StepTemplateName
+        'Name' = $stepTemplateName
         'Description' = Get-VariableFromScriptFile -Path $Path -VariableName StepTemplateDescription
         'ActionType' = 'Octopus.Script'
         'Properties' = @{
-            'Octopus.Action.Script.ScriptBody' = Get-ScriptBody -Path $Path
+            'Octopus.Action.Script.ScriptBody' = $stepTemplateContent
             'Octopus.Action.Script.Syntax' = 'PowerShell'
             }
         'Parameters' = @(Get-VariableFromScriptFile -Path $Path -VariableName StepTemplateParameters)

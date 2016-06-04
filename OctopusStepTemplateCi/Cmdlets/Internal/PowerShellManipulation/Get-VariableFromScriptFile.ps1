@@ -25,12 +25,17 @@ function Get-VariableFromScriptFile {
     param ( 
         $Path,
         $VariableName,
-        [switch]$DontResolveVariable
+        [switch]$DontResolveVariable,
+        [switch]$AllowMissingVariable
     )
 
     $variableValue = Get-VariableStatement -Path $Path -VariableName $VariableName -Type Value
-    if ($null -eq $variableValue) {
-        throw "File '$Path' does not contain metadata variable '$variableName'"
+    if  ($null -eq $variableValue) {
+        if  ($AllowMissingVariable) {
+            return $null
+        } else {
+            throw "File '$Path' does not contain metadata variable '$variableName'"
+        }
     }
 
     $scriptBlock = [ScriptBlock]::Create($variableValue)
