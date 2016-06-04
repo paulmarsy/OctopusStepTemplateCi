@@ -9,7 +9,7 @@ function Export-CmdletParameters {
          if ($firstParameter) { "@{"; $firstParameter = $false }
          else { "}, @{" }
          
-        "`t'Name''= '{0}'" -f $_.name
+        "`t'Name' = '{0}'" -f $_.name
         "`t'Label' = '{0}'" -f ($_.name -creplace '(?<!^)([A-Z][a-z]|(?<=[a-z])[A-Z])', ' $&') # Pascal split
         "`t'HelpText' = '{0}'" -f ($_.description | % Text | % Replace "`r" '`n' |  % Replace "`n" '\n')
         
