@@ -15,7 +15,12 @@ function Export-CmdletParameters {
          
         "`t'Name' = '{0}'" -f $_.name
         "`t'Label' = '{0}'" -f ($_.name -creplace '(?<!^)([A-Z][a-z]|(?<=[a-z])[A-Z])', ' $&') # Pascal split
-        "`t'HelpText' = '{0}'" -f ($_.description | % Text | % Replace "`r" '`n' |  % Replace "`n" '\n')
+        if  ($_.required -eq "true") {
+            $qualifier = "Required"
+        } else {
+            $qualifier = "Optional"
+        }
+        "`t'HelpText' = '{0}: {1}'" -f $qualifier, (($_.description | % Text | % Replace "`r" "`n" |  % Replace "`n" '`n'  ) -join '`n')
         
         if ($_.type.name -eq "switch") {
             "`t'DefaultValue' = 'False'"
