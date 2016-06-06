@@ -35,7 +35,20 @@ function Export-CmdletParameters {
     param(
         [Parameter(Mandator=$true)][System.String]$Name
     )
-    
+
+    function Write-ParameterLine {
+        param(
+            $Name,
+            $Value,
+            $Indent = 1,
+            [switch]$InlinePowerShell
+        )
+        if (-not $InlinePowerShell) {
+            $Value = "`"$($Value)`""
+        }
+        Write-Output ("{0}'{1}' = {2}" -f ("`t" * $Indent), $Name, $Value)
+    }
+
     $cmdlettMetaData = Get-Help -Name $Name 
     $firstParameter = $true
     
@@ -46,33 +59,33 @@ function Export-CmdletParameters {
          if ($firstParameter) { "@{"; $firstParameter = $false }
          else { "}, @{" }
          
-        "`t'Name' = '{0}'" -f $_.name
-        "`t'Label' = '{0}'" -f ($_.name -creplace '(?<!^)([A-Z][a-z]|(?<=[a-z])[A-Z])', ' $&') # Pascal split
+        Write-ParameterLine Name $_.name
+        Write-ParameterLine Label ($_.name -creplace '(?<!^)([A-Z][a-z]|(?<=[a-z])[A-Z])', ' $&') # Pascal split
         if  ($_.required -eq "true") {
             $qualifier = "Required"
         } else {
             $qualifier = "Optional"
         }
-        "`t'HelpText' = `"{0}: {1}`"" -f $qualifier, (($_.description | % Text | % Replace "`r" "`n" |  % Replace "`n" '`n'  ) -join '\n')
+         Write-ParameterLine HelpText ("{0}: {1}" -f $qualifier, (($_.description | % Text | % Replace "`r" "`n" |  % Replace "`n" '`n'  ) -join '\n'))
         
         if ($_.type.name -eq "switch") {
-            "`t'DefaultValue' = 'False'"
-            "`t'DisplaySettings' = @{ 'Octopus.ControlType' = 'Checkbox' }"
+             Write-ParameterLine DefaultValue False
+             Write-ParameterLine DisplaySettings "@{ 'Octopus.ControlType' = 'Checkbox' }" -InlinePowerShell
         } else {
             if  ($null -ne $_.defaultValue -and $_.defaultValue -ne "none") {
-                "`t'DefaultValue' = '{0}'" -f $_.defaultValue
+                 Write-ParameterLine DefaultValue $_.defaultValue
             } else {
-                "`t'DefaultValue' = `$null"
+                 Write-ParameterLine DefaultValue '$null' -InlinePowerShell
             }
 
             $validateSet = $cmdlettMetaData | % { $_.syntax.syntaxItem.parameter } | ? name -eq $_.name | % parameterValueGroup | % parameterValue
             if ($validateSet) {
-                "`t'DisplaySettings' = @{"
-                    "`t`t'Octopus.ControlType' = 'Select'"
-                    "`t`t'Octopus.SelectOptions' = `"{0}`"" -f ($validateSet -join '`n')
-                "`t}"
+                Write-ParameterLine DisplaySettings "@{" -InlinePowerShell
+                Write-ParameterLine 'Octopus.ControlType' Select 2
+                Write-ParameterLine 'Octopus.SelectOptions' ($validateSet -join '`n') 2
+                Write-ParameterLine "}" -InlinePowerShell
             } else {
-                "`t'DisplaySettings' = @{ 'Octopus.ControlType' = 'SingleLineText' }"
+                 Write-ParameterLine DisplaySettings "@{ 'Octopus.ControlType' = 'SingleLineText' }"
             }
         }
     }
