@@ -84,6 +84,7 @@ NestedModules = @(
 
 # Functions to export from this module
 FunctionsToExport = @(
+    'Export-CmdletParameters',
     'Export-StepTemplate',
     'Invoke-OctopusScriptTestSuite',
     'Invoke-TeamCityCiUpload',
