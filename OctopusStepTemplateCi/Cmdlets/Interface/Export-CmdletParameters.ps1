@@ -33,7 +33,7 @@ function Export-CmdletParameters {
     [CmdletBinding()]
     [OutputType("System.String")]
     param(
-        [Parameter(Mandator=$true)][System.String]$Name
+        [Parameter(Mandatory=$true)][System.String]$Name
     )
 
     function Write-ParameterLine {
