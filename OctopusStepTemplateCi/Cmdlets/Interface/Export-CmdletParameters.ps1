@@ -20,7 +20,7 @@ function Export-CmdletParameters {
         } else {
             $qualifier = "Optional"
         }
-        "`t'HelpText' = '{0}: {1}'" -f $qualifier, (($_.description | % Text | % Replace "`r" "`n" |  % Replace "`n" '\n'  ) -join '\n')
+        "`t'HelpText' = `"{0}: {1}`"" -f $qualifier, (($_.description | % Text | % Replace "`r" "`n" |  % Replace "`n" '`n'  ) -join '\n')
         
         if ($_.type.name -eq "switch") {
             "`t'DefaultValue' = 'False'"
@@ -36,7 +36,7 @@ function Export-CmdletParameters {
             if ($validateSet) {
                 "`t'DisplaySettings' = @{"
                     "`t`t'Octopus.ControlType' = 'Select'"
-                    "`t`t'Octopus.SelectOptions' = '{0}'" -f ($validateSet -join '\n')
+                    "`t`t'Octopus.SelectOptions' = `"{0}`"" -f ($validateSet -join '`n')
                 "`t}"
             } else {
                 "`t'DisplaySettings' = @{ 'Octopus.ControlType' = 'SingleLineText' }"
