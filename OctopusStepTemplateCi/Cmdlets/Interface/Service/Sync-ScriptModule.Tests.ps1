@@ -26,14 +26,14 @@ Set-StrictMode -Version Latest
 $here = Split-Path -Parent $MyInvocation.MyCommand.Path
 $sut = (Split-Path -Leaf $MyInvocation.MyCommand.Path) -replace '\.Tests\.', '.'
 . "$here\$sut"
-. "$here\New-ScriptModule.ps1"
-. "$here\..\Internal\Octopus\Invoke-OctopusOperation.ps1"
-. "$here\..\Internal\Octopus\ScriptModules\New-ScriptModuleObject.ps1"
-. "$here\..\Internal\Octopus\ScriptModules\New-ScriptModuleVariableSetObject.ps1"
-. "$here\..\Internal\TeamCity\Write-TeamCityMessage.ps1"
-. "$here\..\Internal\PowerShellManipulation\Get-VariableFromScriptFile.ps1"
-. "$here\..\Internal\PowerShellManipulation\Get-VariableStatement.ps1"
-. "$here\..\Internal\PowerShellManipulation\Get-ScriptBody.ps1"
+. "$here\..\Developer\New-ScriptModule.ps1"
+. "$here\..\..\Internal\Octopus\Invoke-OctopusOperation.ps1"
+. "$here\..\..\Internal\Octopus\ScriptModules\New-ScriptModuleObject.ps1"
+. "$here\..\..\Internal\Octopus\ScriptModules\New-ScriptModuleVariableSetObject.ps1"
+. "$here\..\..\Internal\TeamCity\Write-TeamCityMessage.ps1"
+. "$here\..\..\Internal\PowerShellManipulation\Get-VariableFromScriptFile.ps1"
+. "$here\..\..\Internal\PowerShellManipulation\Get-VariableStatement.ps1"
+. "$here\..\..\Internal\PowerShellManipulation\Get-ScriptBody.ps1"
 
 Describe "Sync-ScriptModule" {
     BeforeEach {

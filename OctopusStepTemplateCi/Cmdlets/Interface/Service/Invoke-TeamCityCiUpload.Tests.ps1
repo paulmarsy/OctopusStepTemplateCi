@@ -26,15 +26,15 @@ Set-StrictMode -Version Latest
 $here = Split-Path -Parent $MyInvocation.MyCommand.Path
 $sut = (Split-Path -Leaf $MyInvocation.MyCommand.Path) -replace '\.Tests\.', '.'
 . "$here\$sut"
-. "$here\Invoke-OctopusScriptTestSuite.ps1"
+. "$here\..\Invoke-OctopusScriptTestSuite.ps1"
 . "$here\Sync-ScriptModule.ps1"
 . "$here\Sync-StepTemplate.ps1"
-. "$here\New-StepTemplate.ps1"
-. "$here\New-ScriptModule.ps1"
-. "$here\..\Internal\Octopus\Reset-Cache.ps1"
-. "$here\..\Internal\Octopus\Test-OctopusConnectivity.ps1"
-. "$here\..\Internal\TeamCity\Reset-BuildOutputDirectory.ps1"
-. "$here\..\Internal\TeamCity\Write-TeamCityMessage.ps1"
+. "$here\..\Developer\New-StepTemplate.ps1"
+. "$here\..\Developer\New-ScriptModule.ps1"
+. "$here\..\..\Internal\Octopus\Reset-Cache.ps1"
+. "$here\..\..\Internal\Octopus\Test-OctopusConnectivity.ps1"
+. "$here\..\..\Internal\TeamCity\Reset-BuildOutputDirectory.ps1"
+. "$here\..\..\Internal\TeamCity\Write-TeamCityMessage.ps1"
 
 Describe "Invoke-TeamCityCiUpload" {
     Mock Write-TeamCityMessage {} 

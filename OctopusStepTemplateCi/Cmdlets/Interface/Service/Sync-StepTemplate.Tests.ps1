@@ -26,15 +26,15 @@ Set-StrictMode -Version Latest
 $here = Split-Path -Parent $MyInvocation.MyCommand.Path
 $sut = (Split-Path -Leaf $MyInvocation.MyCommand.Path) -replace '\.Tests\.', '.'
 . "$here\$sut"
-. "$here\New-StepTemplate.ps1"
-. "$here\..\Internal\Octopus\Invoke-OctopusOperation.ps1"
-. "$here\..\Internal\Octopus\StepTemplates\Convert-PSObjectToHashTable.ps1"
-. "$here\..\Internal\Octopus\StepTemplates\Compare-StepTemplate.ps1"
-. "$here\..\Internal\Octopus\StepTemplates\New-StepTemplateObject.ps1"
-. "$here\..\Internal\TeamCity\Write-TeamCityMessage.ps1"
-. "$here\..\Internal\PowerShellManipulation\Get-VariableFromScriptFile.ps1"
-. "$here\..\Internal\PowerShellManipulation\Get-VariableStatement.ps1"
-. "$here\..\Internal\PowerShellManipulation\Get-ScriptBody.ps1"
+. "$here\..\Developer\New-StepTemplate.ps1"
+. "$here\..\..\Internal\Octopus\Invoke-OctopusOperation.ps1"
+. "$here\..\..\Internal\Octopus\StepTemplates\Convert-PSObjectToHashTable.ps1"
+. "$here\..\..\Internal\Octopus\StepTemplates\Compare-StepTemplate.ps1"
+. "$here\..\..\Internal\Octopus\StepTemplates\New-StepTemplateObject.ps1"
+. "$here\..\..\Internal\TeamCity\Write-TeamCityMessage.ps1"
+. "$here\..\..\Internal\PowerShellManipulation\Get-VariableFromScriptFile.ps1"
+. "$here\..\..\Internal\PowerShellManipulation\Get-VariableStatement.ps1"
+. "$here\..\..\Internal\PowerShellManipulation\Get-ScriptBody.ps1"
 
 Describe "Sync-StepTemplate" {
     BeforeEach {
