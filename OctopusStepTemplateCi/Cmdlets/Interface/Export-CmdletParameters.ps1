@@ -29,6 +29,7 @@ limitations under the License.
 .OUTPUTS
     None.
 #>
+Set-StrictMode -Off
 function Export-CmdletParameters {
     [CmdletBinding()]
     [OutputType("System.String")]
@@ -40,7 +41,7 @@ function Export-CmdletParameters {
         param(
             $Name,
             $Value,
-            $Indent = 1,
+            $Indent = 2,
             [switch]$InlinePowerShell
         )
         if (-not $InlinePowerShell) {
@@ -53,11 +54,13 @@ function Export-CmdletParameters {
     $firstParameter = $true
     
     $mappedCmdlet = ""
+    '$StepTemplateParameters = @('
      $cmdlettMetaData |  % { $_.parameters.parameter } | % {
+         if ($_.name -in @('InformationAction', 'InformationVariable', 'Profile')) { return }
         $mappedCmdlet += "-$($_.name) `$$($_.Name) "
         
-         if ($firstParameter) { "@{"; $firstParameter = $false }
-         else { "}, @{" }
+         if ($firstParameter) { "`t@{"; $firstParameter = $false }
+         else { "`t}, @{" }
          
         Write-ParameterLine Name $_.name
         Write-ParameterLine Label ($_.name -creplace '(?<!^)([A-Z][a-z]|(?<=[a-z])[A-Z])', ' $&') # Pascal split
@@ -72,24 +75,25 @@ function Export-CmdletParameters {
              Write-ParameterLine DefaultValue False
              Write-ParameterLine DisplaySettings "@{ 'Octopus.ControlType' = 'Checkbox' }" -InlinePowerShell
         } else {
-            if  ($null -ne $_.defaultValue -and $_.defaultValue -ne "none") {
+            if  (-not ([string]::IsNullOrWhiteSpace($_.defaultValue)) -and $_.defaultValue -ne "none") {
                  Write-ParameterLine DefaultValue $_.defaultValue
             } else {
                  Write-ParameterLine DefaultValue '$null' -InlinePowerShell
             }
 
             $validateSet = $cmdlettMetaData | % { $_.syntax.syntaxItem.parameter } | ? name -eq $_.name | % parameterValueGroup | % parameterValue
-            if ($validateSet) {
+            if (-not ([string]::IsNullOrWhiteSpace($validateSet))) {
                 Write-ParameterLine DisplaySettings "@{" -InlinePowerShell
                 Write-ParameterLine 'Octopus.ControlType' Select 2
                 Write-ParameterLine 'Octopus.SelectOptions' ($validateSet -join '`n') 2
-                Write-ParameterLine "}" -InlinePowerShell
+                "`t`t}"
             } else {
-                 Write-ParameterLine DisplaySettings "@{ 'Octopus.ControlType' = 'SingleLineText' }"
+                 Write-ParameterLine DisplaySettings "@{ 'Octopus.ControlType' = 'SingleLineText' }" -InlinePowerShell
             }
         }
     }
-    '}'
+    "`t}"
+    ')'
     
     "# Cmdlet Invocation"
     "$Name $mappedCmdlet"
