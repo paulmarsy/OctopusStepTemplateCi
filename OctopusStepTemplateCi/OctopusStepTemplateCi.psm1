@@ -25,15 +25,18 @@ limitations under the License.
 Set-StrictMode -Version Latest
 
 <# Interface Functions exported in the PSD1 file #>
-. "$(Join-Path $PSScriptRoot '\Cmdlets\Interface\Export-CmdletParameters.ps1')"
-. "$(Join-Path $PSScriptRoot '\Cmdlets\Interface\Export-StepTemplate.ps1')"
+. "$(Join-Path $PSScriptRoot '\Cmdlets\Interface\Developer\Experimental\Export-CmdletParameters.ps1')"
+. "$(Join-Path $PSScriptRoot '\Cmdlets\Interface\Developer\Experimental\Import-StepTemplate.ps1')"
+
+. "$(Join-Path $PSScriptRoot '\Cmdlets\Interface\Developer\Export-StepTemplate.ps1')"
+. "$(Join-Path $PSScriptRoot '\Cmdlets\Interface\Developer\New-ScriptModule.ps1')"
+. "$(Join-Path $PSScriptRoot '\Cmdlets\Interface\Developer\New-ScriptValidationTest.ps1')"
+. "$(Join-Path $PSScriptRoot '\Cmdlets\Interface\Developer\New-StepTemplate.ps1')"
+
+. "$(Join-Path $PSScriptRoot '\Cmdlets\Interface\Service\Invoke-TeamCityCiUpload.ps1')"
+. "$(Join-Path $PSScriptRoot '\Cmdlets\Interface\Service\Sync-ScriptModule.ps1')"
+. "$(Join-Path $PSScriptRoot '\Cmdlets\Interface\Service\Sync-StepTemplate.ps1')"
 . "$(Join-Path $PSScriptRoot '\Cmdlets\Interface\Invoke-OctopusScriptTestSuite.ps1')"
-. "$(Join-Path $PSScriptRoot '\Cmdlets\Interface\Invoke-TeamCityCiUpload.ps1')"
-. "$(Join-Path $PSScriptRoot '\Cmdlets\Interface\New-ScriptModule.ps1')"
-. "$(Join-Path $PSScriptRoot '\Cmdlets\Interface\New-ScriptValidationTest.ps1')"
-. "$(Join-Path $PSScriptRoot '\Cmdlets\Interface\New-StepTemplate.ps1')"
-. "$(Join-Path $PSScriptRoot '\Cmdlets\Interface\Sync-ScriptModule.ps1')"
-. "$(Join-Path $PSScriptRoot '\Cmdlets\Interface\Sync-StepTemplate.ps1')"
 
 <# Internal functions only used within this module #>
 . "$(Join-Path $PSScriptRoot '\Cmdlets\Internal\Octopus\ScriptModules\New-ScriptModuleObject.ps1')"
