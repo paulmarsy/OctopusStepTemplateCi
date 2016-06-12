@@ -33,8 +33,8 @@ limitations under the License.
 .PARAMETER Force
     Overwrites the file if it already exists
     
-.PARAMETER ExportToClipboard
-    Exports the step template to the system clipboard
+.PARAMETER ExportToPipeline
+    Writes the step template to the output pipeline
     
 .INPUTS
     None. You cannot pipe objects to Export-StepTemplate.
@@ -49,7 +49,7 @@ function Export-StepTemplate {
         [Parameter(Mandatory=$true)][ValidateScript({ Test-Path $_ })][System.String]$Path,
         [Parameter(Mandatory=$true, ParameterSetName="File")][System.String]$ExportPath,
         [Parameter(Mandatory=$false, ParameterSetName="File")][System.Management.Automation.SwitchParameter]$Force,
-        [Parameter(Mandatory=$true, ParameterSetName="Clipboard")][System.Management.Automation.SwitchParameter]$ExportToClipboard
+        [Parameter(Mandatory=$true, ParameterSetName="Pipeline")][System.Management.Automation.SwitchParameter]$ExportToPipeline
     )
     
     $resolvedPath = Resolve-Path -Path $Path
@@ -65,10 +65,8 @@ function Export-StepTemplate {
             
             "Step Template exported to $ExportPath"
         }
-        "Clipboard" {
-            Microsoft.PowerShell.Management\Set-Clipboard -Value $stepTemplate
-            
-            "Step Template exported clipboard"
+        "Pipeline" {
+            $stepTemplate | Write-Output
         }
     }
 }
