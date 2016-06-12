@@ -1,22 +1,5 @@
 version: 1.1.{build}
-branches:
-  only:
-  - master
 image: WMF 5
-init:
-- ps: >-
-    # Only publish from ASOS repo
-
-    if ($env:APPVEYOR_REPO_NAME -eq "ASOS/OctopusStepTemplateCi") {
-      $env:Publish = "true"
-      # Only publish a new release if a tag (new version) is being built
-      $env:PublishRelease = $env:APPVEYOR_REPO_TAG
-    }
-environment:
-  PowerShellGalleryApiKey:
-    secure: hpjzyINysy/YqCBScdQj3xfAoOxKx1fdfNJzmJb7wX0HPo0q0t+tIN7mOyTKGsnG
-  Publish: false
-  PublishRelease: false
 install:
 - ps: >-
     cinst pester
@@ -58,36 +41,7 @@ test_script:
     Import-Module .\OctopusStepTemplateCi -Force -Verbose
 artifacts:
 - path: OctopusStepTemplateCi.%APPVEYOR_BUILD_VERSION%.nupkg
-deploy:
-- provider: GitHub
-  release: Rolling CI Build
-  description: Rolling CI build release
-  auth_token:
-    secure: zJghEg4jSFdkNek+BVf4xK75EhYaNNJxhfbkWQmqmGt3z/ESjO4LePGIm2R1LpI9
-  draft: false
-  prerelease: true
-  force_update: true
-  on:
-    branch: master
-    Publish: true
-    PublishRelease: true
-- provider: GitHub
-  release: Release - $(APPVEYOR_REPO_TAG_NAME) - ($(APPVEYOR_BUILD_VERSION))
-  description: 'TODO: Enter description before publishing release'
-  auth_token:
-    secure: zJghEg4jSFdkNek+BVf4xK75EhYaNNJxhfbkWQmqmGt3z/ESjO4LePGIm2R1LpI9
-  draft: true
-  force_update: true
-  on:
-    branch: master
-    Publish: true
-    PublishRelease: true
-after_deploy:
-- ps: >-
-    if ($env:Publish -eq "true") {
-      Install-PackageProvider -Name NuGet -Force
-      Publish-Module -Path '.\OctopusStepTemplateCi' -NuGetApiKey $env:PowerShellGalleryApiKey -LicenseUri "http://www.apache.org/licenses/LICENSE-2.0.html"
-    }
+deploy: off
 on_failure:
 - ps: >-
     Get-ChildItem | Out-Host
@@ -95,4 +49,3 @@ on_failure:
     $blockRdp = $true
 
     iex ((new-object net.webclient).DownloadString('https://raw.githubusercontent.com/appveyor/ci/master/scripts/enable-rdp.ps1'))
- 
